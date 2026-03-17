@@ -1,0 +1,12 @@
+# Research / experiment dependencies
+# Install with: pip install -r requirements.txt
+
+ultralytics==8.4.12
+roboflow
+numpy
+matplotlib
+pycocotools
+torch
+torchvision
+scipy
+tqdm
