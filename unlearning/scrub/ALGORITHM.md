@@ -25,4 +25,7 @@
 - epochs, batch, optimizer, lr
 
 ## Notes
-- This folder is scaffolded; implementation should use class logits/feature maps and stable distillation losses.
+- Implemented as a runnable proxy:
+  - forget divergence stage on forget set,
+  - retain distillation stage on teacher-generated pseudo labels.
+- This approximates SCRUB behavior within Ultralytics training constraints.

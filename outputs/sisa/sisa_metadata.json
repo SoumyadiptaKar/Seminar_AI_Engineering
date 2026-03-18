@@ -1,0 +1,82 @@
+{
+  "shards": 10,
+  "slices_per_shard": 5,
+  "slice_epochs": 1,
+  "affected_shards": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "trained_shards": [
+    {
+      "shard_id": 0,
+      "train_images": 94,
+      "epochs": 5
+    },
+    {
+      "shard_id": 1,
+      "train_images": 87,
+      "epochs": 5
+    },
+    {
+      "shard_id": 2,
+      "train_images": 78,
+      "epochs": 5
+    },
+    {
+      "shard_id": 3,
+      "train_images": 80,
+      "epochs": 5
+    },
+    {
+      "shard_id": 4,
+      "train_images": 80,
+      "epochs": 5
+    },
+    {
+      "shard_id": 5,
+      "train_images": 95,
+      "epochs": 5
+    },
+    {
+      "shard_id": 6,
+      "train_images": 86,
+      "epochs": 5
+    },
+    {
+      "shard_id": 7,
+      "train_images": 100,
+      "epochs": 5
+    },
+    {
+      "shard_id": 8,
+      "train_images": 94,
+      "epochs": 5
+    },
+    {
+      "shard_id": 9,
+      "train_images": 105,
+      "epochs": 5
+    }
+  ],
+  "candidate_models": [
+    "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/shards/shard_0_retrain/weights/last.pt",
+    "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/shards/shard_1_retrain/weights/last.pt",
+    "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/shards/shard_2_retrain/weights/last.pt",
+    "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/shards/shard_3_retrain/weights/last.pt",
+    "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/shards/shard_4_retrain/weights/last.pt",
+    "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/shards/shard_5_retrain/weights/last.pt",
+    "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/shards/shard_6_retrain/weights/last.pt",
+    "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/shards/shard_7_retrain/weights/last.pt",
+    "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/shards/shard_8_retrain/weights/last.pt",
+    "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/shards/shard_9_retrain/weights/last.pt"
+  ],
+  "output_weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/unlearned.pt"
+}

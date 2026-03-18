@@ -15,6 +15,9 @@ run:
   forget_class: trichome
   epochs: 5
   batch_size: 8
+  train_batch: 1
+  # Note: train-time augmentation is explicitly disabled in algorithm trainers
+  # because this Roboflow dataset is already augmented.
   learning_rate: 0.0001
   seed: 42
   imgsz: 640
@@ -27,6 +30,29 @@ gradient_ascent:
   split_mode: image
   dry_run: false
 
+gradient_difference:
+  cycles: 2
+  forget_epochs_per_cycle: 1
+  retain_epochs_per_cycle: 1
+  dry_run: false
+
+scrub:
+  forget_epochs: 1
+  retain_epochs: 2
+  retain_lr: 0.00005
+  pseudo_conf: 0.35
+  use_pseudo: false
+  dry_run: false
+
+ssd:
+  alpha: 0.2
+  target_keywords: ["cv3", "cls"]
+  forget_epochs: 1
+  retain_recovery_epochs: 1
+  dry_run: false
+
 sisa:
   shards: 10
   slices_per_shard: 5
+  slice_epochs: 1
+  dry_run: false

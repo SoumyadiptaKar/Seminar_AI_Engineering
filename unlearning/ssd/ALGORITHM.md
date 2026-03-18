@@ -21,4 +21,7 @@
 
 ## Notes
 - Usually faster than full retraining and often one-shot.
-- Current code here is scaffold and should be extended with importance estimation + dampening operator.
+- Implemented as a runnable proxy:
+	- dampens selected parameter groups by configurable factor (`alpha`),
+	- then runs forget suppression + retain recovery refinement.
+- This is an engineering baseline for selective dampening without full Fisher estimation.

@@ -1,0 +1,62 @@
+================================================================================
+YOLO26 TRUE ACCURACY REPORT (COCO EVALUATION) — scrub
+================================================================================
+
+VALIDATION SET
+--------------------------------------------------------------------------------
+Images: 51
+Detections: 12994
+Precision@0.5: 0.450995
+Recall@0.5: 0.686082
+mAP50: 0.450995
+mAP50-95: 0.275615
+Per-class mAP50:
+  nothing: 0.546202
+  stomata: 0.942690
+  trichome: 0.029703
+  vein: 0.285385
+Per-class mAP50-95:
+  nothing: 0.329480
+  stomata: 0.633145
+  trichome: 0.005941
+  vein: 0.133893
+Per-class Precision@0.5:
+  nothing: 0.546202
+  stomata: 0.942690
+  trichome: 0.029703
+  vein: 0.285385
+Per-class Recall@0.5:
+  nothing: 0.825688
+  stomata: 0.982995
+  trichome: 0.021978
+  vein: 0.913669
+
+TEST SET
+--------------------------------------------------------------------------------
+Images: 49
+Detections: 12899
+Precision@0.5: 0.453693
+Recall@0.5: 0.661213
+mAP50: 0.453693
+mAP50-95: 0.278986
+Per-class mAP50:
+  nothing: 0.601289
+  stomata: 0.934991
+  trichome: 0.000000
+  vein: 0.278494
+Per-class mAP50-95:
+  nothing: 0.358228
+  stomata: 0.635445
+  trichome: 0.000000
+  vein: 0.122272
+Per-class Precision@0.5:
+  nothing: 0.601289
+  stomata: 0.934991
+  trichome: 0.000000
+  vein: 0.278494
+Per-class Recall@0.5:
+  nothing: 0.829268
+  stomata: 0.983418
+  trichome: 0.000000
+  vein: 0.832168
+

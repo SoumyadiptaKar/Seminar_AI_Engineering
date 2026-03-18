@@ -1,0 +1,21 @@
+project_root: .
+dataset_root: stomata-batch-1-18
+split_manifest: outputs/splits/split_manifest.json
+output_dir: learning/runs_energy
+
+tracking:
+  use_codecarbon: false
+  estimated_watts: null
+
+baseline_retrain:
+  enabled: true
+  forget_class: trichome
+  device: auto
+  model_config: yolov8n-seg.yaml
+  dry_run: false
+  epochs: 5
+  batch_size: 8
+  imgsz: 640
+  learning_rate: 0.001
+  workers: 4
+  seed: 42

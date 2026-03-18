@@ -1,0 +1,103 @@
+{
+  "ready_to_run": true,
+  "config_path": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/experiments/config.yaml",
+  "manifest_path": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/splits/split_manifest.json",
+  "prepared_retain_yaml": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/preflight/prepared_data/retain_data.yaml",
+  "prepared_forget_yaml": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/preflight/prepared_data/forget_data.yaml",
+  "source_diagnostics": {
+    "train": {
+      "images": 899,
+      "annotations": 46979,
+      "duplicate_category_names": {},
+      "sample_segmentation_types": {
+        "list_of_lists": 5000
+      }
+    },
+    "valid": {
+      "images": 51,
+      "annotations": 2750,
+      "duplicate_category_names": {},
+      "sample_segmentation_types": {
+        "list_of_lists": 2750
+      }
+    },
+    "test": {
+      "images": 49,
+      "annotations": 2569,
+      "duplicate_category_names": {},
+      "sample_segmentation_types": {
+        "list_of_lists": 2569
+      }
+    }
+  },
+  "retain_label_stats": {
+    "train": {
+      "files": 91,
+      "empty_files": 0,
+      "valid_lines": 4121,
+      "bad_format_lines": 0,
+      "oob_lines": 0,
+      "class_counts": {
+        "1": 3681,
+        "0": 198,
+        "3": 242
+      }
+    },
+    "val": {
+      "files": 2,
+      "empty_files": 0,
+      "valid_lines": 82,
+      "bad_format_lines": 0,
+      "oob_lines": 0,
+      "class_counts": {
+        "1": 72,
+        "0": 8,
+        "3": 2
+      }
+    },
+    "test": {
+      "files": 5,
+      "empty_files": 0,
+      "valid_lines": 237,
+      "bad_format_lines": 0,
+      "oob_lines": 0,
+      "class_counts": {
+        "1": 220,
+        "0": 8,
+        "3": 9
+      }
+    }
+  },
+  "forget_label_stats": {
+    "train": {
+      "files": 0,
+      "empty_files": 0,
+      "valid_lines": 0,
+      "bad_format_lines": 0,
+      "oob_lines": 0,
+      "class_counts": {}
+    },
+    "val": {
+      "files": 0,
+      "empty_files": 0,
+      "valid_lines": 0,
+      "bad_format_lines": 0,
+      "oob_lines": 0,
+      "class_counts": {}
+    },
+    "test": {
+      "files": 0,
+      "empty_files": 0,
+      "valid_lines": 0,
+      "bad_format_lines": 0,
+      "oob_lines": 0,
+      "class_counts": {}
+    }
+  },
+  "blocking_issues": [],
+  "warnings": [
+    "forget/train: no files (split may be empty)",
+    "forget/val: no files (split may be empty)",
+    "forget/test: no files (split may be empty)"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "config_path": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/experiments/config.yaml",
+  "algorithms": [
+    {
+      "algorithm": "gradient_difference",
+      "success": true,
+      "runtime_seconds": 235.80221891403198,
+      "tracking": {
+        "tracking_backend": "estimate",
+        "assumed_watts": 35.0,
+        "duration_seconds": 235.802819292,
+        "energy_kwh": 0.0022925274097833335,
+        "co2_kg": 0.0009170109639133335,
+        "error": null
+      },
+      "output_weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/gradient_difference/unlearned.pt",
+      "summary_path": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/runs/gradient_difference/experiment_summary.json",
+      "error": null
+    },
+    {
+      "algorithm": "scrub",
+      "success": true,
+      "runtime_seconds": 139.1724259853363,
+      "tracking": {
+        "tracking_backend": "estimate",
+        "assumed_watts": 35.0,
+        "duration_seconds": 139.17293133299998,
+        "energy_kwh": 0.0013530701657375,
+        "co2_kg": 0.000541228066295,
+        "error": null
+      },
+      "output_weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/scrub/unlearned.pt",
+      "summary_path": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/runs/scrub/experiment_summary.json",
+      "error": null
+    },
+    {
+      "algorithm": "ssd",
+      "success": true,
+      "runtime_seconds": 107.97085309028625,
+      "tracking": {
+        "tracking_backend": "estimate",
+        "assumed_watts": 35.0,
+        "duration_seconds": 107.97218687500003,
+        "energy_kwh": 0.0010497295946180559,
+        "co2_kg": 0.00041989183784722236,
+        "error": null
+      },
+      "output_weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/ssd/unlearned.pt",
+      "summary_path": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/runs/ssd/experiment_summary.json",
+      "error": null
+    },
+    {
+      "algorithm": "sisa",
+      "success": true,
+      "runtime_seconds": 0.4564347267150879,
+      "tracking": {
+        "tracking_backend": "estimate",
+        "assumed_watts": 35.0,
+        "duration_seconds": 0.46678362500000503,
+        "energy_kwh": 4.538174131944494e-06,
+        "co2_kg": 1.8152696527777976e-06,
+        "error": null
+      },
+      "output_weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/unlearned.pt",
+      "summary_path": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/runs/sisa/experiment_summary.json",
+      "error": null
+    }
+  ],
+  "all_success": true
+}
