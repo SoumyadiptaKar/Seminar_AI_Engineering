@@ -36,11 +36,19 @@ runs/
 
 # Downloaded datasets (Roboflow downloads here)
 stomata-batch-1-*/
+stomata-batch-1-18/
 datasets/
+*.zip
+*.tar
+*.tar.gz
 
-# Experiment outputs
+# Training scratch artifacts
+learning/runs/
+learning/runs_energy/
+**/prepared_data/
+
+# Experiment reports (legacy path only)
 metrics_reports/
-outputs/
 
 # macOS
 .DS_Store

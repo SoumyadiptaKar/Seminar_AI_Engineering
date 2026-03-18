@@ -1,0 +1,54 @@
+{
+  "dataset_root": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/stomata-batch-1-18",
+  "forget_class": "trichome",
+  "split_mode": "annotation",
+  "splits_found": [
+    "train",
+    "valid",
+    "test"
+  ],
+  "splits": {
+    "train": {
+      "source_annotations": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/stomata-batch-1-18/train/_annotations.coco.json",
+      "forget_annotations": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/splits/train/forget_annotations.coco.json",
+      "retain_annotations": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/splits/train/retain_annotations.coco.json",
+      "forget_category_ids": [
+        2
+      ],
+      "total_images": 899,
+      "total_annotations": 46979,
+      "forget_images": 808,
+      "forget_annotations_count": 1469,
+      "retain_images": 899,
+      "retain_annotations_count": 45510
+    },
+    "valid": {
+      "source_annotations": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/stomata-batch-1-18/valid/_annotations.coco.json",
+      "forget_annotations": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/splits/valid/forget_annotations.coco.json",
+      "retain_annotations": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/splits/valid/retain_annotations.coco.json",
+      "forget_category_ids": [
+        2
+      ],
+      "total_images": 51,
+      "total_annotations": 2750,
+      "forget_images": 49,
+      "forget_annotations_count": 91,
+      "retain_images": 51,
+      "retain_annotations_count": 2659
+    },
+    "test": {
+      "source_annotations": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/stomata-batch-1-18/test/_annotations.coco.json",
+      "forget_annotations": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/splits/test/forget_annotations.coco.json",
+      "retain_annotations": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/splits/test/retain_annotations.coco.json",
+      "forget_category_ids": [
+        2
+      ],
+      "total_images": 49,
+      "total_annotations": 2569,
+      "forget_images": 44,
+      "forget_annotations_count": 91,
+      "retain_images": 49,
+      "retain_annotations_count": 2478
+    }
+  }
+}

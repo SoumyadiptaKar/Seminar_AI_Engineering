@@ -18,6 +18,9 @@ from learning.common.tracking import track_execution
 from unlearning.common.device import resolve_device, torch_device_for_log
 
 
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
+
+
 def _read_json(path: str) -> Dict[str, Any]:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -49,6 +52,75 @@ def _category_names(coco: Dict[str, Any]) -> List[str]:
     return names
 
 
+def _is_valid_annotation(annotation: Dict[str, Any]) -> bool:
+    bbox = annotation.get("bbox")
+    if not isinstance(bbox, list) or len(bbox) != 4:
+        return False
+    try:
+        x, y, w, h = [float(v) for v in bbox]
+    except Exception:
+        return False
+    if x < 0 or y < 0 or w <= 0 or h <= 0:
+        return False
+
+    segmentation = annotation.get("segmentation")
+    if isinstance(segmentation, list) and segmentation:
+        valid_poly_found = False
+        for poly in segmentation:
+            if not isinstance(poly, list) or len(poly) < 6 or len(poly) % 2 != 0:
+                continue
+            try:
+                coords = [float(v) for v in poly]
+            except Exception:
+                continue
+            if any(v < 0 for v in coords):
+                continue
+            valid_poly_found = True
+            break
+        if not valid_poly_found:
+            return False
+
+    return True
+
+
+def _normalize_retain_annotations(src_json: Path, dst_json: Path) -> None:
+    coco = _read_json(str(src_json))
+    categories = coco.get("categories", [])
+    annotations = coco.get("annotations", [])
+
+    category_ids = sorted({int(c["id"]) for c in categories})
+    id_map = {old_id: new_id for new_id, old_id in enumerate(category_ids, start=1)}
+
+    normalized_categories = []
+    for category in categories:
+        old_id = int(category["id"])
+        mapped_id = id_map.get(old_id)
+        if mapped_id is None:
+            continue
+        normalized = dict(category)
+        normalized["id"] = mapped_id
+        normalized_categories.append(normalized)
+
+    normalized_annotations = []
+    for annotation in annotations:
+        old_id = int(annotation.get("category_id", -1))
+        mapped_id = id_map.get(old_id)
+        if mapped_id is None:
+            continue
+        if not _is_valid_annotation(annotation):
+            continue
+        normalized = dict(annotation)
+        normalized["category_id"] = mapped_id
+        normalized_annotations.append(normalized)
+
+    normalized_coco = dict(coco)
+    normalized_coco["categories"] = normalized_categories
+    normalized_coco["annotations"] = normalized_annotations
+
+    with open(dst_json, "w", encoding="utf-8") as f:
+        json.dump(normalized_coco, f)
+
+
 def _prepare_retain_dataset(dataset_root: Path, split_manifest: Dict[str, Any], out_dir: Path) -> str:
     ann_dir = out_dir / "annotations"
     ann_dir.mkdir(parents=True, exist_ok=True)
@@ -61,23 +133,27 @@ def _prepare_retain_dataset(dataset_root: Path, split_manifest: Dict[str, Any], 
         retain_ann = split_info.get("retain_annotations")
         if not retain_ann or not os.path.exists(retain_ann):
             continue
-        shutil.copy2(retain_ann, ann_dir / f"{yolo_split}.json")
+        _normalize_retain_annotations(Path(retain_ann), ann_dir / f"{yolo_split}.json")
 
     converted_dir = out_dir / "converted"
     convert_coco(
         labels_dir=str(ann_dir),
         save_dir=str(converted_dir),
-        use_segments=False,
+        use_segments=True,
         cls91to80=False,
     )
 
     for split, yolo_split in split_map.items():
         src_split = dataset_root / split
-        if not src_split.exists():
+        src_images = src_split / "images"
+        src_dir = src_images if src_images.exists() else src_split
+        if not src_dir.exists():
             continue
         dst_split = converted_dir / "images" / yolo_split
         dst_split.mkdir(parents=True, exist_ok=True)
-        for img in src_split.glob("*.jpg"):
+        for img in src_dir.iterdir():
+            if not img.is_file() or img.suffix.lower() not in IMAGE_SUFFIXES:
+                continue
             _safe_symlink(img, dst_split / img.name)
 
     first_split = next(iter(split_manifest.get("splits", {}).keys()), None)
@@ -136,6 +212,8 @@ def run(config_path: str) -> Dict[str, Any]:
     run_dir.mkdir(parents=True, exist_ok=True)
 
     prepared_dir = run_dir / "prepared_data"
+    if prepared_dir.exists():
+        shutil.rmtree(prepared_dir)
     prepared_dir.mkdir(parents=True, exist_ok=True)
     data_yaml = _prepare_retain_dataset(dataset_root, split_manifest, prepared_dir)
 

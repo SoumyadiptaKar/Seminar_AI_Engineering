@@ -67,6 +67,12 @@ def _resolve_existing_image_path(split_dir: str, file_name: str) -> str:
     return direct
 
 
+def _label_bars(ax, containers, fmt: str = "{:.3f}"):
+    for container in containers:
+        labels = [fmt.format(bar.get_height()) for bar in container]
+        ax.bar_label(container, labels=labels, padding=2, fontsize=8)
+
+
 def discover_models(benchmark_json: str = None, baseline_weights: str = None, explicit_weights=None):
     models = []
     seen_paths = set()
@@ -382,18 +388,20 @@ def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str, mod
     x = np.arange(len(metric_names))
     width = 0.36
 
-    plt.figure(figsize=(10, 6))
-    plt.bar(x - width / 2, val_values, width=width, label="Validation")
-    plt.bar(x + width / 2, test_values, width=width, label="Test")
-    plt.xticks(x, metric_names)
-    plt.ylim(0, 1)
-    plt.ylabel("Score")
-    plt.title(f"YOLO26 Accuracy Metrics on Validation/Test — {model_label}")
-    plt.grid(axis="y", alpha=0.3)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(metrics_plot, dpi=300)
-    plt.close()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    bars_val = ax.bar(x - width / 2, val_values, width=width, label="Validation")
+    bars_test = ax.bar(x + width / 2, test_values, width=width, label="Test")
+    ax.set_xticks(x)
+    ax.set_xticklabels(metric_names)
+    ax.set_ylim(0, 1)
+    ax.set_ylabel("Score")
+    ax.set_title(f"YOLO26 Accuracy Metrics on Validation/Test — {model_label}")
+    ax.grid(axis="y", alpha=0.3)
+    ax.legend()
+    _label_bars(ax, [bars_val, bars_test])
+    fig.tight_layout()
+    fig.savefig(metrics_plot, dpi=300)
+    plt.close(fig)
 
     class_names = sorted(set(val_metrics["per_class_map50"].keys()) | set(test_metrics["per_class_map50"].keys()))
     x_cls = np.arange(len(class_names))
@@ -404,18 +412,20 @@ def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str, mod
     test_map50_vals = [test_metrics["per_class_map50"].get(c, 0.0) for c in class_names]
 
     class_map50_plot = os.path.join(output_dir, "classwise_map50_valid_vs_test.png")
-    plt.figure(figsize=(12, 6))
-    plt.bar(x_cls - width_cls / 2, val_map50_vals, width=width_cls, label="Validation")
-    plt.bar(x_cls + width_cls / 2, test_map50_vals, width=width_cls, label="Test")
-    plt.xticks(x_cls, class_names)
-    plt.ylim(0, 1)
-    plt.ylabel("mAP50")
-    plt.title(f"Class-wise mAP50 (Validation vs Test) — {model_label}")
-    plt.grid(axis="y", alpha=0.3)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(class_map50_plot, dpi=300)
-    plt.close()
+    fig, ax = plt.subplots(figsize=(12, 6))
+    bars_val = ax.bar(x_cls - width_cls / 2, val_map50_vals, width=width_cls, label="Validation")
+    bars_test = ax.bar(x_cls + width_cls / 2, test_map50_vals, width=width_cls, label="Test")
+    ax.set_xticks(x_cls)
+    ax.set_xticklabels(class_names)
+    ax.set_ylim(0, 1)
+    ax.set_ylabel("mAP50")
+    ax.set_title(f"Class-wise mAP50 (Validation vs Test) — {model_label}")
+    ax.grid(axis="y", alpha=0.3)
+    ax.legend()
+    _label_bars(ax, [bars_val, bars_test])
+    fig.tight_layout()
+    fig.savefig(class_map50_plot, dpi=300)
+    plt.close(fig)
 
     # Plot class-wise Precision@0.5 and Recall@0.5 comparison
     val_prec_vals = [val_metrics["per_class_precision50"].get(c, 0.0) for c in class_names]
@@ -426,8 +436,8 @@ def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str, mod
     class_pr_plot = os.path.join(output_dir, "classwise_precision_recall_valid_vs_test.png")
     fig, axes = plt.subplots(1, 2, figsize=(16, 6), sharey=True)
 
-    axes[0].bar(x_cls - width_cls / 2, val_prec_vals, width=width_cls, label="Validation")
-    axes[0].bar(x_cls + width_cls / 2, test_prec_vals, width=width_cls, label="Test")
+    bars_p_val = axes[0].bar(x_cls - width_cls / 2, val_prec_vals, width=width_cls, label="Validation")
+    bars_p_test = axes[0].bar(x_cls + width_cls / 2, test_prec_vals, width=width_cls, label="Test")
     axes[0].set_xticks(x_cls)
     axes[0].set_xticklabels(class_names)
     axes[0].set_ylim(0, 1)
@@ -435,14 +445,16 @@ def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str, mod
     axes[0].grid(axis="y", alpha=0.3)
     axes[0].legend()
 
-    axes[1].bar(x_cls - width_cls / 2, val_rec_vals, width=width_cls, label="Validation")
-    axes[1].bar(x_cls + width_cls / 2, test_rec_vals, width=width_cls, label="Test")
+    bars_r_val = axes[1].bar(x_cls - width_cls / 2, val_rec_vals, width=width_cls, label="Validation")
+    bars_r_test = axes[1].bar(x_cls + width_cls / 2, test_rec_vals, width=width_cls, label="Test")
     axes[1].set_xticks(x_cls)
     axes[1].set_xticklabels(class_names)
     axes[1].set_ylim(0, 1)
     axes[1].set_title("Class-wise Recall@0.5")
     axes[1].grid(axis="y", alpha=0.3)
     axes[1].legend()
+    _label_bars(axes[0], [bars_p_val, bars_p_test])
+    _label_bars(axes[1], [bars_r_val, bars_r_test])
 
     fig.suptitle(f"Class-wise Precision/Recall (Validation vs Test) — {model_label}")
     fig.tight_layout()
@@ -480,8 +492,8 @@ def write_model_comparison(all_metrics: dict, output_root: str):
     width = 0.2
     fig, axes = plt.subplots(1, 2, figsize=(16, 6), sharey=True)
 
-    axes[0].bar(x - width / 2, val_map50, width=width, label="Val mAP50")
-    axes[0].bar(x + width / 2, test_map50, width=width, label="Test mAP50")
+    bars_m_val = axes[0].bar(x - width / 2, val_map50, width=width, label="Val mAP50")
+    bars_m_test = axes[0].bar(x + width / 2, test_map50, width=width, label="Test mAP50")
     axes[0].set_xticks(x)
     axes[0].set_xticklabels(model_names, rotation=20, ha="right")
     axes[0].set_ylim(0, 1)
@@ -489,14 +501,16 @@ def write_model_comparison(all_metrics: dict, output_root: str):
     axes[0].grid(axis="y", alpha=0.3)
     axes[0].legend()
 
-    axes[1].bar(x - width / 2, val_tri, width=width, label="Val trichome mAP50")
-    axes[1].bar(x + width / 2, test_tri, width=width, label="Test trichome mAP50")
+    bars_t_val = axes[1].bar(x - width / 2, val_tri, width=width, label="Val trichome mAP50")
+    bars_t_test = axes[1].bar(x + width / 2, test_tri, width=width, label="Test trichome mAP50")
     axes[1].set_xticks(x)
     axes[1].set_xticklabels(model_names, rotation=20, ha="right")
     axes[1].set_ylim(0, 1)
     axes[1].set_title("Trichome mAP50 by Model")
     axes[1].grid(axis="y", alpha=0.3)
     axes[1].legend()
+    _label_bars(axes[0], [bars_m_val, bars_m_test])
+    _label_bars(axes[1], [bars_t_val, bars_t_test])
 
     fig.suptitle("Model Comparison: Baseline vs Unlearned")
     fig.tight_layout()

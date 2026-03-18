@@ -1,0 +1,22 @@
+{
+  "config_path": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/experiments/config.yaml",
+  "algorithms": [
+    {
+      "algorithm": "gradient_difference",
+      "success": true,
+      "runtime_seconds": 232.570702791214,
+      "tracking": {
+        "tracking_backend": "estimate",
+        "assumed_watts": 35.0,
+        "duration_seconds": 232.573391084,
+        "energy_kwh": 0.0022611301910944446,
+        "co2_kg": 0.0009044520764377779,
+        "error": null
+      },
+      "output_weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/gradient_difference/unlearned.pt",
+      "summary_path": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/runs/gradient_difference/experiment_summary.json",
+      "error": null
+    }
+  ],
+  "all_success": true
+}
