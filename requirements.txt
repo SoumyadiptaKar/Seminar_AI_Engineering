@@ -11,3 +11,4 @@ torchvision
 scipy
 tqdm
 pyyaml
+codecarbon

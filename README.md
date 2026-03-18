@@ -48,6 +48,11 @@ The model (`backend/models/weights.pt`) was originally trained on the [Stomata B
 │   ├── run_unlearning.py
 │   └── split_dataset.py
 │
+├── learning/                   # Retraining baseline scaffold + tracking
+│   ├── config.yaml
+│   ├── train_retain_baseline.py
+│   └── common/tracking.py
+│
 ├── test.py                     # Baseline evaluation: downloads dataset + computes COCO metrics
 ├── requirements.txt            # Research/experiment dependencies
 ├── Writeups/                   # Paper drafts (IEEE format)
@@ -114,6 +119,13 @@ python experiments/split_dataset.py \
 
 Set `run.device: auto` in `experiments/config.yaml` to prefer `mps` on MacBook Metal GPUs.
 You can also force a device with `run.device: mps`, `cuda`, or `cpu`.
+
+### Time and Energy Tracking
+
+- Both unlearning and learning pipelines write tracking info (`duration_seconds`, `energy_kwh`, `co2_kg`) to summary JSON.
+- Configure in `experiments/config.yaml` or `learning/config.yaml`:
+	- `tracking.use_codecarbon: true` for CodeCarbon-based measurement (may prompt for macOS password)
+	- `tracking.use_codecarbon: false` for non-blocking estimate backend.
 
 ### Forget Set Definition
 

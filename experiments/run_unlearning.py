@@ -13,6 +13,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from evaluation.metrics import baseline_metrics, compare_metric_cards
 from evaluation.report import write_experiment_summary
+from learning.common.tracking import track_execution
 from unlearning.common.device import resolve_device, torch_device_for_log
 from unlearning.common.registry import get_unlearner_class
 from unlearning.common.types import UnlearningConfig
@@ -39,8 +40,10 @@ def run_once(config_path: str) -> Dict[str, Any]:
     dataset_root = resolve_path(project_root, cfg["dataset_root"])
     output_dir = resolve_path(project_root, cfg["output_dir"])
     baseline_json = resolve_path(project_root, cfg["baseline_metrics_json"])
+    split_manifest = resolve_path(project_root, cfg.get("split_manifest", "outputs/splits/split_manifest.json"))
 
     run_cfg = cfg["run"]
+    tracking_cfg = cfg.get("tracking", {})
     algorithm = run_cfg["algorithm"]
     resolved_device = resolve_device(run_cfg.get("device", "auto"))
     try:
@@ -63,13 +66,27 @@ def run_once(config_path: str) -> Dict[str, Any]:
         learning_rate=run_cfg.get("learning_rate", 1e-4),
         seed=run_cfg.get("seed", 42),
         extra={
+            "split_manifest": split_manifest,
+            "imgsz": run_cfg.get("imgsz", 640),
+            "workers": run_cfg.get("workers", 4),
+            "save_period": run_cfg.get("save_period", -1),
+            "ga_forget_epochs": cfg.get("gradient_ascent", {}).get("forget_epochs", 1),
+            "ga_retain_epochs": cfg.get("gradient_ascent", {}).get("retain_epochs", run_cfg.get("epochs", 5)),
+            "ga_split_mode": cfg.get("gradient_ascent", {}).get("split_mode", "image"),
+            "ga_dry_run": cfg.get("gradient_ascent", {}).get("dry_run", False),
             "sisa_shards": cfg.get("sisa", {}).get("shards", 10),
             "sisa_slices_per_shard": cfg.get("sisa", {}).get("slices_per_shard", 5),
         },
     )
 
     unlearner_cls = get_unlearner_class(algorithm)
-    result = unlearner_cls(unlearn_cfg).run()
+    with track_execution(
+        project_name=f"unlearning-{algorithm}",
+        device=resolved_device,
+        enable_codecarbon=bool(tracking_cfg.get("use_codecarbon", False)),
+        estimated_watts=tracking_cfg.get("estimated_watts"),
+    ) as tracking:
+        result = unlearner_cls(unlearn_cfg).run()
 
     baseline = baseline_metrics(baseline_json)
     unlearned_metrics_stub = {
@@ -88,6 +105,7 @@ def run_once(config_path: str) -> Dict[str, Any]:
         "runtime_seconds": result.runtime_seconds,
         "notes": result.notes,
         "device": torch_device_for_log(resolved_device, torch_version),
+        "tracking": tracking,
         "metric_card": metric_card,
     }
 

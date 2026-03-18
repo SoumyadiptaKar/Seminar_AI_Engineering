@@ -70,9 +70,9 @@ def _split_single_coco(
         "total_images": len(all_image_ids),
         "total_annotations": len(annotations),
         "forget_images": len(forget_coco.get("images", [])),
-        "forget_annotations": len(forget_annotations),
+        "forget_annotations_count": len(forget_annotations),
         "retain_images": len(retain_coco.get("images", [])),
-        "retain_annotations": len(retain_annotations),
+        "retain_annotations_count": len(retain_annotations),
     }
     return forget_coco, retain_coco, stats
 
