@@ -23,21 +23,35 @@ The model (`backend/models/weights.pt`) was originally trained on the [Stomata B
 │       ├── inference.py
 │       └── model_utils.py
 │
-├── unlearning/                 # [TO BUILD] Unlearning algorithms
-│   ├── base_unlearner.py
-│   ├── gradient_ascent.py      # Algorithm 1: GA
-│   ├── gradient_difference.py  # Algorithm 2: NegGrad+
-│   ├── scrub.py                # Algorithm 3: SCRUB
-│   └── ssd.py                  # Algorithm 4: SSD
+├── unlearning/                 # Unlearning framework
+│   ├── common/
+│   │   ├── base.py
+│   │   ├── registry.py
+│   │   └── types.py
+│   ├── gradient_ascent/
+│   │   └── unlearner.py        # Algorithm 1: GA
+│   ├── gradient_difference/
+│   │   └── unlearner.py        # Algorithm 2: NegGrad+
+│   ├── scrub/
+│   │   └── unlearner.py        # Algorithm 3: SCRUB
+│   ├── ssd/
+│   │   └── unlearner.py        # Algorithm 4: SSD
+│   └── sisa/
+│       └── unlearner.py        # SISA-style unlearning scaffold
 │
-├── evaluation/                 # [TO BUILD] Evaluation pipeline
-│   ├── metrics.py              # mAP wrappers
-│   ├── mia.py                  # Membership Inference Attack
-│   └── activation_distance.py  # Feature-distance to gold standard
+├── evaluation/                 # Evaluation scaffold
+│   ├── metrics.py              # baseline comparison card
+│   └── report.py               # summary writer
 │
-├── experiments/                # [TO BUILD] Orchestration + config
-│   ├── run_all.py
-│   └── config.yaml
+├── experiments/                # Orchestration + config
+│   ├── config.yaml
+│   ├── run_unlearning.py
+│   └── split_dataset.py
+│
+├── learning/                   # Retraining baseline scaffold + tracking
+│   ├── config.yaml
+│   ├── train_retain_baseline.py
+│   └── common/tracking.py
 │
 ├── test.py                     # Baseline evaluation: downloads dataset + computes COCO metrics
 ├── requirements.txt            # Research/experiment dependencies
@@ -85,6 +99,33 @@ Outputs are written to `metrics_reports/`:
 ---
 
 ## Unlearning Experiment Plan
+
+### Generate Forget/Retain Splits
+
+Use the splitter before running unlearning:
+
+```bash
+python experiments/split_dataset.py \
+	--dataset-root stomata-batch-1-18 \
+	--forget-class trichome \
+	--split-mode annotation \
+	--out-dir outputs/splits_annotation
+```
+
+- `split-mode image`: remove full images that contain forget class from retain set
+- `split-mode annotation`: keep images but remove forget-class annotations from retain set
+
+### Device (Apple Metal)
+
+Set `run.device: auto` in `experiments/config.yaml` to prefer `mps` on MacBook Metal GPUs.
+You can also force a device with `run.device: mps`, `cuda`, or `cpu`.
+
+### Time and Energy Tracking
+
+- Both unlearning and learning pipelines write tracking info (`duration_seconds`, `energy_kwh`, `co2_kg`) to summary JSON.
+- Configure in `experiments/config.yaml` or `learning/config.yaml`:
+	- `tracking.use_codecarbon: true` for CodeCarbon-based measurement (may prompt for macOS password)
+	- `tracking.use_codecarbon: false` for non-blocking estimate backend.
 
 ### Forget Set Definition
 

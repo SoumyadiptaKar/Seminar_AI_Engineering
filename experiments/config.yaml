@@ -1,0 +1,32 @@
+project_root: .
+original_weights: backend/models/weights.pt
+dataset_root: stomata-batch-1-18
+baseline_metrics_json: metrics_reports/metrics_summary.json
+output_dir: outputs
+split_manifest: outputs/splits/split_manifest.json
+
+tracking:
+  use_codecarbon: false
+  estimated_watts: null
+
+run:
+  algorithm: gradient_ascent
+  device: auto
+  forget_class: trichome
+  epochs: 5
+  batch_size: 8
+  learning_rate: 0.0001
+  seed: 42
+  imgsz: 640
+  workers: 4
+  save_period: -1
+
+gradient_ascent:
+  forget_epochs: 1
+  retain_epochs: 3
+  split_mode: image
+  dry_run: false
+
+sisa:
+  shards: 10
+  slices_per_shard: 5
