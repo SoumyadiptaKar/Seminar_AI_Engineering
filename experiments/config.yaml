@@ -1,0 +1,18 @@
+project_root: .
+original_weights: backend/models/weights.pt
+dataset_root: stomata-batch-1-18
+baseline_metrics_json: metrics_reports/metrics_summary.json
+output_dir: outputs
+
+run:
+  algorithm: gradient_ascent
+  device: auto
+  forget_class: trichome
+  epochs: 5
+  batch_size: 8
+  learning_rate: 0.0001
+  seed: 42
+
+sisa:
+  shards: 10
+  slices_per_shard: 5
