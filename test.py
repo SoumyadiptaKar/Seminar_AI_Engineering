@@ -1,8 +1,10 @@
 import importlib
+import argparse
 import json
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
 
 def install_and_import(package_name: str, module_name: str = None):
@@ -47,6 +49,57 @@ def download_roboflow_dataset() -> str:
 
     print(f"✓ Dataset ready at: {dataset_path}")
     return dataset_path
+
+
+def _slugify_name(name: str) -> str:
+    return "".join(ch.lower() if ch.isalnum() else "_" for ch in name).strip("_") or "model"
+
+
+def _resolve_existing_image_path(split_dir: str, file_name: str) -> str:
+    direct = os.path.join(split_dir, file_name)
+    if os.path.exists(direct):
+        return direct
+
+    nested = os.path.join(split_dir, "images", file_name)
+    if os.path.exists(nested):
+        return nested
+
+    return direct
+
+
+def discover_models(benchmark_json: str = None, baseline_weights: str = None, explicit_weights=None):
+    models = []
+    seen_paths = set()
+
+    if baseline_weights:
+        bpath = os.path.abspath(baseline_weights)
+        if os.path.exists(bpath):
+            models.append(("baseline", bpath))
+            seen_paths.add(bpath)
+
+    if explicit_weights:
+        for weight_path in explicit_weights:
+            abs_path = os.path.abspath(weight_path)
+            if not os.path.exists(abs_path) or abs_path in seen_paths:
+                continue
+            models.append((Path(abs_path).stem, abs_path))
+            seen_paths.add(abs_path)
+
+    if benchmark_json and os.path.exists(benchmark_json):
+        with open(benchmark_json, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+        for row in payload.get("algorithms", []):
+            output_weights = row.get("output_weights")
+            algorithm = row.get("algorithm", "model")
+            if not output_weights:
+                continue
+            abs_path = os.path.abspath(output_weights)
+            if not os.path.exists(abs_path) or abs_path in seen_paths:
+                continue
+            models.append((algorithm, abs_path))
+            seen_paths.add(abs_path)
+
+    return models
 
 
 def load_model(weights_path: str):
@@ -180,7 +233,7 @@ def evaluate_split(model, dataset_path: str, split: str):
     detections = []
     total_images = len(images)
     for idx, image in enumerate(images, start=1):
-        image_path = os.path.join(split_dir, image["file_name"])
+        image_path = _resolve_existing_image_path(split_dir, image["file_name"])
         if not os.path.exists(image_path):
             continue
 
@@ -224,6 +277,8 @@ def evaluate_split(model, dataset_path: str, split: str):
             "map50_95": 0.0,
             "per_class_map50": {cat_id_to_name[cid]: 0.0 for cid in sorted(cat_id_to_name.keys())},
             "per_class_map50_95": {cat_id_to_name[cid]: 0.0 for cid in sorted(cat_id_to_name.keys())},
+            "per_class_precision50": {cat_id_to_name[cid]: 0.0 for cid in sorted(cat_id_to_name.keys())},
+            "per_class_recall50": {cat_id_to_name[cid]: 0.0 for cid in sorted(cat_id_to_name.keys())},
             "num_images": total_images,
             "num_detections": 0,
         }
@@ -275,7 +330,7 @@ def evaluate_split(model, dataset_path: str, split: str):
     return metrics
 
 
-def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str):
+def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str, model_label: str = "model"):
     os.makedirs(output_dir, exist_ok=True)
 
     summary = {
@@ -314,7 +369,7 @@ def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str):
             f.write("\n")
 
         f.write("=" * 80 + "\n")
-        f.write("YOLO26 TRUE ACCURACY REPORT (COCO EVALUATION)\n")
+        f.write(f"YOLO26 TRUE ACCURACY REPORT (COCO EVALUATION) — {model_label}\n")
         f.write("=" * 80 + "\n\n")
         write_split("VALIDATION SET", val_metrics)
         write_split("TEST SET", test_metrics)
@@ -333,7 +388,7 @@ def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str):
     plt.xticks(x, metric_names)
     plt.ylim(0, 1)
     plt.ylabel("Score")
-    plt.title("YOLO26 Accuracy Metrics on Validation/Test")
+    plt.title(f"YOLO26 Accuracy Metrics on Validation/Test — {model_label}")
     plt.grid(axis="y", alpha=0.3)
     plt.legend()
     plt.tight_layout()
@@ -355,7 +410,7 @@ def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str):
     plt.xticks(x_cls, class_names)
     plt.ylim(0, 1)
     plt.ylabel("mAP50")
-    plt.title("Class-wise mAP50 (Validation vs Test)")
+    plt.title(f"Class-wise mAP50 (Validation vs Test) — {model_label}")
     plt.grid(axis="y", alpha=0.3)
     plt.legend()
     plt.tight_layout()
@@ -389,7 +444,7 @@ def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str):
     axes[1].grid(axis="y", alpha=0.3)
     axes[1].legend()
 
-    fig.suptitle("Class-wise Precision/Recall (Validation vs Test)")
+    fig.suptitle(f"Class-wise Precision/Recall (Validation vs Test) — {model_label}")
     fig.tight_layout()
     fig.savefig(class_pr_plot, dpi=300)
     plt.close(fig)
@@ -404,22 +459,108 @@ def generate_reports(val_metrics: dict, test_metrics: dict, output_dir: str):
     print(f"✓ {class_pr_plot}")
 
 
+def write_model_comparison(all_metrics: dict, output_root: str):
+    os.makedirs(output_root, exist_ok=True)
+
+    summary = {
+        "timestamp": datetime.now().isoformat(),
+        "models": all_metrics,
+    }
+    out_json = os.path.join(output_root, "model_comparison_summary.json")
+    with open(out_json, "w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=2)
+
+    model_names = list(all_metrics.keys())
+    val_map50 = [all_metrics[m]["validation"]["map50"] for m in model_names]
+    test_map50 = [all_metrics[m]["test"]["map50"] for m in model_names]
+    val_tri = [all_metrics[m]["validation"].get("per_class_map50", {}).get("trichome", 0.0) for m in model_names]
+    test_tri = [all_metrics[m]["test"].get("per_class_map50", {}).get("trichome", 0.0) for m in model_names]
+
+    x = np.arange(len(model_names))
+    width = 0.2
+    fig, axes = plt.subplots(1, 2, figsize=(16, 6), sharey=True)
+
+    axes[0].bar(x - width / 2, val_map50, width=width, label="Val mAP50")
+    axes[0].bar(x + width / 2, test_map50, width=width, label="Test mAP50")
+    axes[0].set_xticks(x)
+    axes[0].set_xticklabels(model_names, rotation=20, ha="right")
+    axes[0].set_ylim(0, 1)
+    axes[0].set_title("Overall mAP50 by Model")
+    axes[0].grid(axis="y", alpha=0.3)
+    axes[0].legend()
+
+    axes[1].bar(x - width / 2, val_tri, width=width, label="Val trichome mAP50")
+    axes[1].bar(x + width / 2, test_tri, width=width, label="Test trichome mAP50")
+    axes[1].set_xticks(x)
+    axes[1].set_xticklabels(model_names, rotation=20, ha="right")
+    axes[1].set_ylim(0, 1)
+    axes[1].set_title("Trichome mAP50 by Model")
+    axes[1].grid(axis="y", alpha=0.3)
+    axes[1].legend()
+
+    fig.suptitle("Model Comparison: Baseline vs Unlearned")
+    fig.tight_layout()
+    out_plot = os.path.join(output_root, "model_comparison_metrics.png")
+    fig.savefig(out_plot, dpi=300)
+    plt.close(fig)
+
+    print("\n" + "=" * 80)
+    print("MODEL COMPARISON GENERATED")
+    print("=" * 80)
+    print(f"✓ {out_json}")
+    print(f"✓ {out_plot}")
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Evaluate baseline and unlearned models on COCO metrics")
+    parser.add_argument("--dataset-path", default=None, help="Dataset root path (uses Roboflow download if omitted)")
+    parser.add_argument("--weights", nargs="*", default=None, help="Explicit model weight paths to evaluate")
+    parser.add_argument("--benchmark-json", default="outputs/comparison/algorithms_benchmark.json", help="Benchmark JSON with unlearned weight paths")
+    parser.add_argument("--baseline-weights", default=os.path.join("backend", "models", "weights.pt"))
+    parser.add_argument("--output-root", default=os.path.join(os.getcwd(), "metrics_reports"))
+    args = parser.parse_args()
+
     print("\n" + "=" * 80)
     print("YOLO26 TRUE EVALUATION PIPELINE")
     print("=" * 80)
 
-    weights_path = os.path.join("backend", "models", "weights.pt")
-    output_dir = os.path.join(os.getcwd(), "metrics_reports")
+    dataset_path = args.dataset_path if args.dataset_path else download_roboflow_dataset()
+    if not os.path.exists(dataset_path):
+        raise FileNotFoundError(f"Dataset path not found: {dataset_path}")
 
-    dataset_path = download_roboflow_dataset()
-    model = load_model(weights_path)
-    display_model_summary(model)
+    model_specs = discover_models(
+        benchmark_json=args.benchmark_json,
+        baseline_weights=args.baseline_weights,
+        explicit_weights=args.weights,
+    )
 
-    val_metrics = evaluate_split(model, dataset_path, "valid")
-    test_metrics = evaluate_split(model, dataset_path, "test")
+    if not model_specs:
+        raise ValueError("No model weights found to evaluate")
 
-    generate_reports(val_metrics, test_metrics, output_dir)
+    all_metrics = {}
+    for model_name, weights_path in model_specs:
+        safe_name = _slugify_name(model_name)
+        print("\n" + "#" * 80)
+        print(f"EVALUATING MODEL: {model_name}")
+        print("#" * 80)
+
+        model = load_model(weights_path)
+        display_model_summary(model)
+
+        val_metrics = evaluate_split(model, dataset_path, "valid")
+        test_metrics = evaluate_split(model, dataset_path, "test")
+
+        model_out_dir = os.path.join(args.output_root, safe_name)
+        generate_reports(val_metrics, test_metrics, model_out_dir, model_label=model_name)
+
+        all_metrics[model_name] = {
+            "weights": os.path.abspath(weights_path),
+            "validation": val_metrics,
+            "test": test_metrics,
+            "report_dir": os.path.abspath(model_out_dir),
+        }
+
+    write_model_comparison(all_metrics, args.output_root)
 
 
 if __name__ == "__main__":

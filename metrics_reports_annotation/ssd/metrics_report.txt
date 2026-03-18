@@ -1,0 +1,62 @@
+================================================================================
+YOLO26 TRUE ACCURACY REPORT (COCO EVALUATION) — ssd
+================================================================================
+
+VALIDATION SET
+--------------------------------------------------------------------------------
+Images: 51
+Detections: 15281
+Precision@0.5: 0.399531
+Recall@0.5: 0.649126
+mAP50: 0.399531
+mAP50-95: 0.243107
+Per-class mAP50:
+  nothing: 0.421033
+  stomata: 0.935610
+  trichome: 0.014851
+  vein: 0.226630
+Per-class mAP50-95:
+  nothing: 0.248182
+  stomata: 0.623898
+  trichome: 0.002805
+  vein: 0.097541
+Per-class Precision@0.5:
+  nothing: 0.421033
+  stomata: 0.935610
+  trichome: 0.014851
+  vein: 0.226630
+Per-class Recall@0.5:
+  nothing: 0.752294
+  stomata: 0.980506
+  trichome: 0.021978
+  vein: 0.841727
+
+TEST SET
+--------------------------------------------------------------------------------
+Images: 49
+Detections: 14674
+Precision@0.5: 0.397140
+Recall@0.5: 0.635704
+mAP50: 0.397140
+mAP50-95: 0.241519
+Per-class mAP50:
+  nothing: 0.414948
+  stomata: 0.931228
+  trichome: 0.000000
+  vein: 0.242384
+Per-class mAP50-95:
+  nothing: 0.244213
+  stomata: 0.627963
+  trichome: 0.000000
+  vein: 0.093901
+Per-class Precision@0.5:
+  nothing: 0.414948
+  stomata: 0.931228
+  trichome: 0.000000
+  vein: 0.242384
+Per-class Recall@0.5:
+  nothing: 0.762195
+  stomata: 0.983418
+  trichome: 0.000000
+  vein: 0.797203
+

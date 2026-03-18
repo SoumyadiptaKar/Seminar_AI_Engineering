@@ -23,4 +23,8 @@
 
 ## Notes
 - Strong systems baseline for practical deletion workloads.
-- Current repository code has runner/scaffold hooks; full shard training/retraining loop is pending.
+- Implemented as a runnable proxy:
+	- hash-based train-image sharding,
+	- retraining only affected shards,
+	- export of representative checkpoint + shard metadata.
+- Full multi-shard ensemble aggregation can be added later for stronger fidelity.

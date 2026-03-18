@@ -115,6 +115,35 @@ Project: Seminar AI Engineering — Machine Unlearning on Vision Models
   - enable real CodeCarbon mode when user can provide password,
   - keep deterministic estimate mode for non-interactive runs.
 
+### Entry 8 — Implemented remaining unlearning algorithms
+- Added shared data prep utilities for unlearning modules:
+  - `unlearning/common/data_prep.py`
+  - includes: manifest loading, retain/forget dataset prep, teacher pseudo-label generation, shard dataset builder.
+- Implemented runnable `gradient_difference` algorithm:
+  - file: `unlearning/gradient_difference/unlearner.py`
+  - behavior: alternating forget/retain cycles (configurable cycles and per-cycle epochs).
+- Implemented runnable `scrub` proxy:
+  - file: `unlearning/scrub/unlearner.py`
+  - behavior: forget divergence stage + retain distillation stage using teacher pseudo-labels.
+- Implemented runnable `ssd` proxy:
+  - file: `unlearning/ssd/unlearner.py`
+  - behavior: selective parameter dampening (`alpha`, keyword targeting) + forget/retain refinement.
+- Implemented runnable `sisa` proxy:
+  - file: `unlearning/sisa/unlearner.py`
+  - behavior: hash-based sharding, retrain affected shards only, emit `sisa_metadata.json`.
+- Extended experiment config and runner for all new algorithm-specific hyperparameters:
+  - `experiments/config.yaml`
+  - `experiments/run_unlearning.py`
+- Updated algorithm docs to reflect new implementations:
+  - `unlearning/gradient_difference/ALGORITHM.md`
+  - `unlearning/scrub/ALGORITHM.md`
+  - `unlearning/ssd/ALGORITHM.md`
+  - `unlearning/sisa/ALGORITHM.md`
+- Validation performed:
+  - `python -m py_compile ...` over all new modules
+  - dry-run execution for all algorithms via `run_once` loop:
+    - `gradient_difference`, `scrub`, `ssd`, `sisa` all returned success and wrote output checkpoints.
+
 ---
 
 ## Update policy (from now on)
@@ -124,3 +153,43 @@ Project: Seminar AI Engineering — Machine Unlearning on Vision Models
   - what was changed
   - why it was changed
   - validation command/output (if executed)
+
+### Entry 9 — Preflight hardening before full benchmark runs
+- Goal: make pipeline safe to run by fixing label/data/config inconsistencies before training.
+- Added robust detection-focused COCO sanitization in `unlearning/common/data_prep.py`:
+  - global category schema builder with unique names,
+  - category id remapping to contiguous ids,
+  - bbox clipping/cleanup to image bounds,
+  - removal of invalid/missing-image annotations.
+- Hardened multi-stage unlearners with stable stage handoff and safer train args:
+  - `unlearning/gradient_ascent/unlearner.py`
+  - `unlearning/gradient_difference/unlearner.py`
+  - `unlearning/scrub/unlearner.py`
+  - `unlearning/ssd/unlearner.py`
+  - `unlearning/sisa/unlearner.py`
+  - changes include: stage checkpoint reload, `val=False`, `overlap_mask=False`, configurable `train_batch` (default 1).
+- Updated orchestration config plumbing:
+  - `experiments/run_unlearning.py` now passes `run.train_batch` and `scrub.use_pseudo`.
+  - `experiments/config.yaml` now includes `run.train_batch: 1` and `scrub.use_pseudo: false` default.
+- Added `experiments/preflight_check.py`:
+  - validates manifest + split files,
+  - inspects source segmentation format and category duplicates,
+  - prepares sanitized retain/forget YOLO datasets,
+  - scans generated labels for malformed/out-of-bounds lines,
+  - emits `ready_to_run` verdict + warnings/blockers JSON.
+- Validation performed:
+  - `python experiments/preflight_check.py --config experiments/config.yaml`
+  - Result: `ready_to_run: true`, `blocking_issues: []`, `oob_lines: 0` on retain labels.
+
+### Entry 10 — Disabled all train-time augmentation
+- Reason: dataset was already augmented in Roboflow; additional online augmentation produced unrealistic batch visuals and unnecessary distribution shift.
+- Updated all unlearning trainers to disable augmentation explicitly during training:
+  - `unlearning/gradient_ascent/unlearner.py`
+  - `unlearning/gradient_difference/unlearner.py`
+  - `unlearning/scrub/unlearner.py`
+  - `unlearning/ssd/unlearner.py`
+  - `unlearning/sisa/unlearner.py`
+- Disabled settings include: mosaic, mixup, copy_paste, erasing, hsv transforms, flips, and geometric transforms (degrees/translate/scale/shear/perspective).
+- Added note in `experiments/config.yaml` that train-time augmentation is intentionally off.
+- Validation performed:
+  - smoke benchmark rerun for `gradient_difference` completed successfully and wrote `outputs/comparison/algorithms_benchmark_smoke.json` with `success: true`.

@@ -4,7 +4,10 @@
 - Typical objective combines:
   - ascent on forget subset gradients,
   - descent on retain subset gradients.
-- In this project, folder currently contains scaffold code for integration with shared runner.
+- In this project, implemented as **alternating optimization cycles**:
+  - forget suppression step,
+  - retain recovery step,
+  repeated for configurable cycles.
 
 ## Inputs
 - `original_weights`
@@ -24,3 +27,4 @@
 ## Notes
 - Planned implementation path: shared batch loader over retain+forget, then update with
   `grad = lambda_retain * grad_retain - lambda_forget * grad_forget`.
+- Current implementation is a practical cycle-based proxy that is fully runnable in this repository.

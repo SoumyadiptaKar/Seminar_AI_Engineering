@@ -1,0 +1,355 @@
+{
+  "timestamp": "2026-03-18T18:37:14.006089",
+  "models": {
+    "baseline": {
+      "weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/backend/models/weights.pt",
+      "validation": {
+        "split": "valid",
+        "precision": 0.6834296301577157,
+        "recall": 0.826517257176281,
+        "map50": 0.6834296301577157,
+        "map50_95": 0.40024396931687306,
+        "per_class_map50": {
+          "nothing": 0.6101314346709941,
+          "stomata": 0.9260348924471704,
+          "trichome": 0.7979713184327486,
+          "vein": 0.3995808750799499
+        },
+        "per_class_map50_95": {
+          "nothing": 0.39186357868551264,
+          "stomata": 0.6356974391375697,
+          "trichome": 0.3853127593699452,
+          "vein": 0.1881021000744652
+        },
+        "per_class_precision50": {
+          "nothing": 0.6101314346709941,
+          "stomata": 0.9260348924471704,
+          "trichome": 0.7979713184327486,
+          "vein": 0.3995808750799499
+        },
+        "per_class_recall50": {
+          "nothing": 0.7889908256880734,
+          "stomata": 0.9688925756947325,
+          "trichome": 0.8791208791208791,
+          "vein": 0.6690647482014388
+        },
+        "num_images": 51,
+        "num_detections": 6369
+      },
+      "test": {
+        "split": "test",
+        "precision": 0.6772736106733063,
+        "recall": 0.828957974258836,
+        "map50": 0.6772736106733063,
+        "map50_95": 0.38525819751553814,
+        "per_class_map50": {
+          "nothing": 0.6617720686099194,
+          "stomata": 0.9162535891758792,
+          "trichome": 0.7284279134171813,
+          "vein": 0.4026408714902451
+        },
+        "per_class_map50_95": {
+          "nothing": 0.42488221654444563,
+          "stomata": 0.6253405127170988,
+          "trichome": 0.31869044788652917,
+          "vein": 0.17211961291407907
+        },
+        "per_class_precision50": {
+          "nothing": 0.6617720686099194,
+          "stomata": 0.9162535891758792,
+          "trichome": 0.7284279134171813,
+          "vein": 0.4026408714902451
+        },
+        "per_class_recall50": {
+          "nothing": 0.8170731707317073,
+          "stomata": 0.973284200829111,
+          "trichome": 0.8681318681318682,
+          "vein": 0.6573426573426573
+        },
+        "num_images": 49,
+        "num_detections": 6514
+      },
+      "report_dir": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/metrics_reports_annotation/baseline"
+    },
+    "gradient_difference": {
+      "weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/gradient_difference/unlearned.pt",
+      "validation": {
+        "split": "valid",
+        "precision": 0.35431804772611103,
+        "recall": 0.6300182202876772,
+        "map50": 0.35431804772611103,
+        "map50_95": 0.2145675006773957,
+        "per_class_map50": {
+          "nothing": 0.27007012957521387,
+          "stomata": 0.9414649667801965,
+          "trichome": 0.0,
+          "vein": 0.205737094549034
+        },
+        "per_class_map50_95": {
+          "nothing": 0.14638774927001072,
+          "stomata": 0.6267411952546933,
+          "trichome": 0.0,
+          "vein": 0.08514105818487873
+        },
+        "per_class_precision50": {
+          "nothing": 0.27007012957521387,
+          "stomata": 0.9414649667801965,
+          "trichome": 0.0,
+          "vein": 0.205737094549034
+        },
+        "per_class_recall50": {
+          "nothing": 0.7064220183486238,
+          "stomata": 0.9863127333056823,
+          "trichome": 0.0,
+          "vein": 0.8273381294964028
+        },
+        "num_images": 51,
+        "num_detections": 14602
+      },
+      "test": {
+        "split": "test",
+        "precision": 0.3753859284404103,
+        "recall": 0.6210913283445049,
+        "map50": 0.3753859284404103,
+        "map50_95": 0.2270064583736347,
+        "per_class_map50": {
+          "nothing": 0.3557885350232692,
+          "stomata": 0.9309078195269888,
+          "trichome": 0.0,
+          "vein": 0.21484735921138345
+        },
+        "per_class_map50_95": {
+          "nothing": 0.20219695618317157,
+          "stomata": 0.6209828526147365,
+          "trichome": 0.0,
+          "vein": 0.08484602469663069
+        },
+        "per_class_precision50": {
+          "nothing": 0.3557885350232692,
+          "stomata": 0.9309078195269888,
+          "trichome": 0.0,
+          "vein": 0.21484735921138345
+        },
+        "per_class_recall50": {
+          "nothing": 0.6646341463414634,
+          "stomata": 0.987563334868724,
+          "trichome": 0.0,
+          "vein": 0.8321678321678322
+        },
+        "num_images": 49,
+        "num_detections": 14306
+      },
+      "report_dir": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/metrics_reports_annotation/gradient_difference"
+    },
+    "scrub": {
+      "weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/scrub/unlearned.pt",
+      "validation": {
+        "split": "valid",
+        "precision": 0.4509948587476945,
+        "recall": 0.6860824420417931,
+        "map50": 0.4509948587476945,
+        "map50_95": 0.2756145762890833,
+        "per_class_map50": {
+          "nothing": 0.5462016102696644,
+          "stomata": 0.9426901724068982,
+          "trichome": 0.0297029702970297,
+          "vein": 0.2853846820171858
+        },
+        "per_class_map50_95": {
+          "nothing": 0.32948015845022766,
+          "stomata": 0.6331447462527751,
+          "trichome": 0.005940594059405941,
+          "vein": 0.13389280639392476
+        },
+        "per_class_precision50": {
+          "nothing": 0.5462016102696644,
+          "stomata": 0.9426901724068982,
+          "trichome": 0.0297029702970297,
+          "vein": 0.2853846820171858
+        },
+        "per_class_recall50": {
+          "nothing": 0.8256880733944955,
+          "stomata": 0.9829946080464538,
+          "trichome": 0.02197802197802198,
+          "vein": 0.9136690647482014
+        },
+        "num_images": 51,
+        "num_detections": 12994
+      },
+      "test": {
+        "split": "test",
+        "precision": 0.4536932591211376,
+        "recall": 0.6612134761689311,
+        "map50": 0.4536932591211376,
+        "map50_95": 0.2789861660935782,
+        "per_class_map50": {
+          "nothing": 0.6012888054540181,
+          "stomata": 0.9349906347798251,
+          "trichome": 0.0,
+          "vein": 0.27849359625070697
+        },
+        "per_class_map50_95": {
+          "nothing": 0.35822811021037737,
+          "stomata": 0.6354448415055947,
+          "trichome": 0.0,
+          "vein": 0.12227171265834075
+        },
+        "per_class_precision50": {
+          "nothing": 0.6012888054540181,
+          "stomata": 0.9349906347798251,
+          "trichome": 0.0,
+          "vein": 0.27849359625070697
+        },
+        "per_class_recall50": {
+          "nothing": 0.8292682926829268,
+          "stomata": 0.9834177798249655,
+          "trichome": 0.0,
+          "vein": 0.8321678321678322
+        },
+        "num_images": 49,
+        "num_detections": 12899
+      },
+      "report_dir": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/metrics_reports_annotation/scrub"
+    },
+    "ssd": {
+      "weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/ssd/unlearned.pt",
+      "validation": {
+        "split": "valid",
+        "precision": 0.3995312488036342,
+        "recall": 0.6491260581916855,
+        "map50": 0.3995312488036342,
+        "map50_95": 0.243106621890112,
+        "per_class_map50": {
+          "nothing": 0.42103302912648,
+          "stomata": 0.9356103189576457,
+          "trichome": 0.01485148514851485,
+          "vein": 0.22663016198189667
+        },
+        "per_class_map50_95": {
+          "nothing": 0.2481818836714466,
+          "stomata": 0.6238982613021117,
+          "trichome": 0.002805280528052805,
+          "vein": 0.09754106205883695
+        },
+        "per_class_precision50": {
+          "nothing": 0.42103302912648,
+          "stomata": 0.9356103189576457,
+          "trichome": 0.01485148514851485,
+          "vein": 0.22663016198189667
+        },
+        "per_class_recall50": {
+          "nothing": 0.7522935779816514,
+          "stomata": 0.9805060141020323,
+          "trichome": 0.02197802197802198,
+          "vein": 0.841726618705036
+        },
+        "num_images": 51,
+        "num_detections": 15281
+      },
+      "test": {
+        "split": "test",
+        "precision": 0.39713998885565066,
+        "recall": 0.6357039247447456,
+        "map50": 0.39713998885565066,
+        "map50_95": 0.2415194423050678,
+        "per_class_map50": {
+          "nothing": 0.4149482547173887,
+          "stomata": 0.9312277501145403,
+          "trichome": 0.0,
+          "vein": 0.2423839505906735
+        },
+        "per_class_map50_95": {
+          "nothing": 0.24421330575710348,
+          "stomata": 0.6279632544258692,
+          "trichome": 0.0,
+          "vein": 0.09390120903729865
+        },
+        "per_class_precision50": {
+          "nothing": 0.4149482547173887,
+          "stomata": 0.9312277501145403,
+          "trichome": 0.0,
+          "vein": 0.2423839505906735
+        },
+        "per_class_recall50": {
+          "nothing": 0.7621951219512195,
+          "stomata": 0.9834177798249655,
+          "trichome": 0.0,
+          "vein": 0.7972027972027972
+        },
+        "num_images": 49,
+        "num_detections": 14674
+      },
+      "report_dir": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/metrics_reports_annotation/ssd"
+    },
+    "sisa": {
+      "weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/sisa/unlearned.pt",
+      "validation": {
+        "split": "valid",
+        "precision": 0.6253732997561005,
+        "recall": 0.7879502633879294,
+        "map50": 0.6253732997561005,
+        "map50_95": 0.3528422012294795,
+        "per_class_map50": {
+          "nothing": 0.5272569693196612,
+          "stomata": 0.9319500771073123,
+          "trichome": 0.7040735537636456,
+          "vein": 0.3382125988337826
+        },
+        "per_class_map50_95": {
+          "nothing": 0.3294009158891755,
+          "stomata": 0.6090488583434466,
+          "trichome": 0.32934619002725807,
+          "vein": 0.14357284065803783
+        },
+        "per_class_precision50": {
+          "nothing": 0.5272569693196612,
+          "stomata": 0.9319500771073123,
+          "trichome": 0.7040735537636456,
+          "vein": 0.3382125988337826
+        },
+        "per_class_recall50": {
+          "nothing": 0.7247706422018348,
+          "stomata": 0.9705516383243468,
+          "trichome": 0.7802197802197802,
+          "vein": 0.6762589928057554
+        },
+        "num_images": 51,
+        "num_detections": 7425
+      },
+      "test": {
+        "split": "test",
+        "precision": 0.6269797374226894,
+        "recall": 0.7886834120312286,
+        "map50": 0.6269797374226894,
+        "map50_95": 0.3502449763042835,
+        "per_class_map50": {
+          "nothing": 0.6234731265001576,
+          "stomata": 0.9151877000437539,
+          "trichome": 0.6103678952628944,
+          "vein": 0.35889022788395175
+        },
+        "per_class_map50_95": {
+          "nothing": 0.3927559504333319,
+          "stomata": 0.6112024920413952,
+          "trichome": 0.2564017709222036,
+          "vein": 0.14061969182020334
+        },
+        "per_class_precision50": {
+          "nothing": 0.6234731265001576,
+          "stomata": 0.9151877000437539,
+          "trichome": 0.6103678952628944,
+          "vein": 0.35889022788395175
+        },
+        "per_class_recall50": {
+          "nothing": 0.8109756097560976,
+          "stomata": 0.9751266697374482,
+          "trichome": 0.7252747252747253,
+          "vein": 0.6433566433566433
+        },
+        "num_images": 49,
+        "num_detections": 7806
+      },
+      "report_dir": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/metrics_reports_annotation/sisa"
+    }
+  }
+}

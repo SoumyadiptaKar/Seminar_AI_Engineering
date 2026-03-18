@@ -12,6 +12,7 @@ import yaml
 from ..common.base import BaseUnlearner
 from ..common.types import UnlearningResult
 from ..common.utils import ensure_dir
+from ..common.data_prep import load_manifest, prepare_retain_dataset, prepare_forget_empty_dataset
 
 
 def _read_json(path: str) -> Dict[str, Any]:
@@ -44,6 +45,16 @@ def _category_names(coco: Dict[str, Any]) -> List[str]:
 
 
 class GradientAscentUnlearner(BaseUnlearner):
+    @staticmethod
+    def _stage_weights(base_dir: str, stage_name: str) -> str:
+        last_path = os.path.join(base_dir, stage_name, "weights", "last.pt")
+        best_path = os.path.join(base_dir, stage_name, "weights", "best.pt")
+        if os.path.exists(last_path):
+            return last_path
+        if os.path.exists(best_path):
+            return best_path
+        raise FileNotFoundError(f"No weights found for stage '{stage_name}'")
+
     def _load_manifest(self) -> Dict[str, Any]:
         manifest_path = self.config.extra.get("split_manifest")
         if not manifest_path:
@@ -169,12 +180,12 @@ class GradientAscentUnlearner(BaseUnlearner):
                 notes=notes,
             )
 
-        manifest = self._load_manifest()
+        manifest = load_manifest(self.config.extra.get("split_manifest"))
         work_dir = Path(out_dir) / "prepared_data"
         work_dir.mkdir(parents=True, exist_ok=True)
 
-        retain_data_yaml = self._prepare_retain_dataset(manifest, work_dir)
-        forget_data_yaml = self._prepare_forget_dataset(manifest, work_dir)
+        retain_data_yaml = prepare_retain_dataset(manifest, work_dir)
+        forget_data_yaml = prepare_forget_empty_dataset(manifest, work_dir)
 
         forget_epochs = int(self.config.extra.get("ga_forget_epochs", 1))
         retain_epochs = int(self.config.extra.get("ga_retain_epochs", self.config.epochs))
@@ -182,41 +193,81 @@ class GradientAscentUnlearner(BaseUnlearner):
         workers = int(self.config.extra.get("workers", 4))
         save_period = int(self.config.extra.get("save_period", -1))
 
+        train_batch = int(self.config.extra.get("train_batch", 1))
+
+        forget_stage = "forget_stage"
+        retain_stage = "retain_stage"
         model = YOLO(self.config.original_weights)
 
         model.train(
             data=forget_data_yaml,
             epochs=max(1, forget_epochs),
-            batch=self.config.batch_size,
+            batch=max(1, train_batch),
             imgsz=imgsz,
             device=self.config.device,
             lr0=self.config.learning_rate,
+            overlap_mask=False,
+            mosaic=0.0,
+            mixup=0.0,
+            copy_paste=0.0,
+            erasing=0.0,
+            hsv_h=0.0,
+            hsv_s=0.0,
+            hsv_v=0.0,
+            fliplr=0.0,
+            flipud=0.0,
+            degrees=0.0,
+            translate=0.0,
+            scale=0.0,
+            shear=0.0,
+            perspective=0.0,
             workers=workers,
             save_period=save_period,
             project=out_dir,
-            name="forget_stage",
+            name=forget_stage,
             exist_ok=True,
             seed=self.config.seed,
+            val=False,
             verbose=False,
         )
+
+        forget_weights = self._stage_weights(out_dir, forget_stage)
+        model = YOLO(forget_weights)
 
         model.train(
             data=retain_data_yaml,
             epochs=max(1, retain_epochs),
-            batch=self.config.batch_size,
+            batch=max(1, train_batch),
             imgsz=imgsz,
             device=self.config.device,
             lr0=self.config.learning_rate,
+            overlap_mask=False,
+            mosaic=0.0,
+            mixup=0.0,
+            copy_paste=0.0,
+            erasing=0.0,
+            hsv_h=0.0,
+            hsv_s=0.0,
+            hsv_v=0.0,
+            fliplr=0.0,
+            flipud=0.0,
+            degrees=0.0,
+            translate=0.0,
+            scale=0.0,
+            shear=0.0,
+            perspective=0.0,
             workers=workers,
             save_period=save_period,
             project=out_dir,
-            name="retain_stage",
+            name=retain_stage,
             exist_ok=True,
             seed=self.config.seed,
+            val=False,
             verbose=False,
         )
 
-        model.save(output_weights)
+        retain_weights = self._stage_weights(out_dir, retain_stage)
+        shutil.copy2(retain_weights, output_weights)
 
         notes = (
             "Executed two-stage GA-style unlearning: forget-stage suppression on forget set "
