@@ -1,0 +1,50 @@
+Machine Unlearning for Object Detection Models — Editable Draft Text (for review)
+
+Introduction
+The rapid growth of machine learning models as an integral part of personalized applications, from facial recognition to content generation, has evidently led to increased user-privacy concerns and data-removal requests. Machine Learning as a Service (MLaaS) has only intensified this need, since such platforms operate on large volumes of potentially sensitive user data. As legal frameworks such as the General Data Protection Regulation (GDPR) in Europe and the California Consumer Privacy Act (CCPA) in the United States enforce the “right to be forgotten,” machine learning practitioners face a practical engineering challenge: how can we efficiently remove the influence of selected data points from a trained model without retraining everything from scratch?
+
+This challenge is particularly acute in computer vision systems where full retraining is expensive and the forgetting target can be semantically specific (e.g., one class in detection/segmentation). Therefore, beyond simple deletion guarantees, practical unlearning studies must jointly report: (i) forgetting efficacy, (ii) retain-set utility, and (iii) computational cost.
+
+Our practical contributions are:
+- a reproducible object detection unlearning benchmark on the Birch stomata dataset;
+- comparative evaluation of four implemented methods under the same base model and split protocol;
+- joint reporting of mAP-based effectiveness and runtime/energy efficiency.
+
+Experimental Setup (summary text)
+All experiments are run on an Apple Silicon MacBook (MPS backend enabled) using Python and Ultralytics YOLO segmentation tooling. We use one fixed baseline checkpoint and a shared orchestration pipeline so that each unlearning method starts from the same initialization and data split.
+
+The dataset contains four categories: nothing, stomata, trichome, and vein. We perform class-level unlearning for trichome. In annotation-mode splitting, trichome annotations are removed from the retain data while other annotations are preserved.
+
+Observed split statistics are:
+- train: 899 images, 46,979 annotations;
+- validation: 51 images, 2,750 annotations;
+- test: 49 images, 2,569 annotations.
+
+We start from the same baseline model M0 for all methods. We evaluate Gradient Difference, SCRUB, SSD, and SISA-style unlearning. Baseline test mAP50 is 0.6773 and baseline trichome mAP50 is 0.7284.
+
+Evaluation / Results
+From the overall comparison (algorithm × split), the baseline remains strongest in global utility (test mAP50 = 0.6773), while unlearning introduces an expected utility drop. Among strict-forgetting methods, SCRUB gives the strongest utility-forgetting balance (test mAP50 = 0.4537), followed by SSD (0.3971) and Gradient Difference (0.3754).
+
+The class-wise SCRUB figure gives important detail: trichome is fully forgotten on test (mAP50 = 0.0000), while a very small residual remains on validation (mAP50 = 0.0297). At the same time, utility is strongly preserved on stomata (test: 0.9350, validation: 0.9427). The “nothing” and “vein” classes show moderate degradation compared with the baseline, which is expected under unlearning pressure.
+
+SISA follows a different behavior: it preserves high overall utility (test mAP50 = 0.6270, closest to baseline) but does not satisfy strict class forgetting (trichome test mAP50 = 0.6104). This demonstrates that utility retention and deletion effectiveness can diverge significantly.
+
+Efficiency / Energy Findings
+Energy and CO2 trends are consistent with runtime behavior:
+- SSD is best in energy efficiency (0.00442 kWh, 0.00177 kg CO2),
+- SCRUB is second (0.00794 kWh, 0.00318 kg CO2),
+- SISA is the most expensive (0.02217 kWh, 0.00887 kg CO2),
+- retain-only retraining baseline remains more expensive than SSD and SCRUB.
+
+Discussion
+The updated visualizations reinforce that machine unlearning must be evaluated as a multi-objective problem. Looking only at global mAP50 would favor SISA, while looking only at forgetting metrics would favor SCRUB/SSD/Gradient Difference. In deployment, the method choice should be driven by policy requirements:
+- strict deletion requirement → prefer SCRUB/SSD-type behavior,
+- utility-first requirement with relaxed deletion tolerance → SISA may be acceptable.
+
+Limitations remain:
+- energy/CO2 values are estimate-backend values under fixed watt assumptions (comparative, not absolute carbon accounting);
+- experiments are based on one dataset and one hardware stack;
+- some surveyed methods (e.g., SALUN, diffusion unlearning) are not yet implemented in this benchmark.
+
+Conclusion
+This study provides a practical benchmark of machine unlearning for YOLO-based microscopic object detection. The updated figures confirm that complete test-set class forgetting is achievable (Gradient Difference, SCRUB, SSD), but with utility trade-offs. Among strict-forgetting methods, SCRUB provides the best utility retention, while SSD offers the best energy/CO2 efficiency. SISA preserves global utility most effectively but does not achieve strict target-class deletion. Overall, unlearning method selection should be guided by a balanced view of deletion quality, retained performance, and computational cost.

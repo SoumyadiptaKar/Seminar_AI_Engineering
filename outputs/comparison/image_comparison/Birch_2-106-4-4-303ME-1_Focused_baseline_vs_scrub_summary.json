@@ -1,0 +1,37 @@
+{
+  "input_image": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/experiments/img test/Birch_2-106-4-4-303ME-1_Focused.png",
+  "baseline_weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/backend/models/weights.pt",
+  "scrub_weights": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/scrub/unlearned.pt",
+  "settings": {
+    "conf": 0.25,
+    "iou": 0.25,
+    "imgsz": 640
+  },
+  "baseline": {
+    "total_instances": 45,
+    "trichome_instances": 4,
+    "class_counts": {
+      "stomata": 39,
+      "trichome": 4,
+      "vein": 2
+    },
+    "mean_confidence": 0.7654745366838244,
+    "max_confidence": 0.9148846864700317,
+    "min_confidence": 0.2585878074169159
+  },
+  "scrub": {
+    "total_instances": 36,
+    "trichome_instances": 0,
+    "class_counts": {
+      "stomata": 36
+    },
+    "mean_confidence": 0.6128586158156395,
+    "max_confidence": 0.8952928781509399,
+    "min_confidence": 0.3048485219478607
+  },
+  "delta": {
+    "total_instances": -9,
+    "trichome_instances": -4
+  },
+  "output_image": "/Users/soumyadiptakar2002/Desktop/2025UHEL/Homework/Sem2/Seminar_AI_Engineering/outputs/comparison/image_comparison/Birch_2-106-4-4-303ME-1_Focused_baseline_vs_scrub.png"
+}
